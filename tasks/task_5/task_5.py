@@ -18,9 +18,12 @@ class ChromaCollectionCreator:
         :param processor: An instance of DocumentProcessor that has processed documents.
         :param embeddings_config: An embedding client for embedding documents.
         """
-        self.processor = processor      # This will hold the DocumentProcessor from Task 3
-        self.embed_model = embed_model  # This will hold the EmbeddingClient from Task 4
-        self.db = None                  # This will hold the Chroma collection
+        # This will hold the DocumentProcessor from Task 3
+        self.processor = processor
+        # This will hold the EmbeddingClient from Task 4
+        self.embed_model = embed_model
+        # This will hold the Chroma collection  
+        self.db = None                  
     
     def create_chroma_collection(self):
         """
@@ -48,28 +51,18 @@ class ChromaCollectionCreator:
         Note: Ensure to replace placeholders like [Your code here] with actual implementation code as per the instructions above.
         """
         
-        # Step 1: Check for processed documents
         if len(self.processor.pages) == 0:
             st.error("No documents found!", icon="🚨")
             return
 
-        # Step 2: Split documents into text chunks
-        # Use a TextSplitter from Langchain to split the documents into smaller text chunks
-        # https://python.langchain.com/docs/modules/data_connection/document_transformers/character_text_splitter
-        # [Your code here for splitting documents]
         text_splitter = CharacterTextSplitter(separator="\n\n", chunk_size=1000, chunk_overlap=200)
         texts = text_splitter.split_documents(self.processor.pages)
         
         if texts is not None:
             st.success(f"Successfully split pages to {len(texts)} documents!", icon="✅")
 
-        # Step 3: Create the Chroma Collection
-        # https://docs.trychroma.com/
-        # Create a Chroma in-memory client using the text chunks and the embeddings model
-        # [Your code here for creating Chroma collection]
         chroma_collection = Chroma.from_documents(texts, self.embed_model)
         self.db = chroma_collection
-
         
         if self.db:
             st.success("Successfully created Chroma Collection!", icon="✅")
@@ -96,16 +89,16 @@ class ChromaCollectionCreator:
         return self.db.as_retriever()
 
 if __name__ == "__main__":
-    processor = DocumentProcessor() # Initialize from Task 3
+    processor = DocumentProcessor()
     processor.ingest_documents()
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "radical-ai-quizzify",
+        "project": "YOUR PROJECT-ID HERE",
         "location": "us-central1"
     }
     
-    embed_client = EmbeddingClient(**embed_config) # Initialize from Task 4
+    embed_client = EmbeddingClient(**embed_config)
     
     chroma_creator = ChromaCollectionCreator(processor, embed_client)
     

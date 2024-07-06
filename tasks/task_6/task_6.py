@@ -45,50 +45,37 @@ if __name__ == "__main__":
     # Configuration for EmbeddingClient
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "radical-ai-quizzify",
+        "project": "YOUR PROJECT-ID HERE",
         "location": "us-central1"
     }
     
-    screen = st.empty() # Screen 1, ingest documents
+    screen = st.empty()
     with screen.container():
         st.header("Quizzify")
-        ####### YOUR CODE HERE #######
-        # 1) Initalize DocumentProcessor and Ingest Documents from Task 3
         processor = DocumentProcessor()
         processor.ingest_documents()
 
-        # 2) Initalize the EmbeddingClient from Task 4 with embed config
         embed_client = EmbeddingClient(**embed_config)
 
-        # 3) Initialize the ChromaCollectionCreator from Task 5
         chroma_creator = ChromaCollectionCreator(processor, embed_client)
-        ####### YOUR CODE HERE #######
 
         with st.form("Load Data to Chroma"):
             st.subheader("Quiz Builder")
             st.write("Select PDFs for Ingestion, the topic for the quiz, and click Generate!")
             
-            ####### YOUR CODE HERE #######
-            # 4) Use streamlit widgets to capture the user's input
             topic_input = st.text_input("Topic for Generative Quiz")
-            # 4) for the quiz topic and the desired number of questions
             num_of_questions = st.select_slider("Number of Questions", options=[1,2,3,4,5,6,7,8,9,10])
-            ####### YOUR CODE HERE #######
             
             document = None
             
             submitted = st.form_submit_button("Generate a Quiz!")
             if submitted:
-                ####### YOUR CODE HERE #######
-                # 5) Use the create_chroma_collection() method to create a Chroma collection from the processed documents
                 chroma_creator.create_chroma_collection()
-                ####### YOUR CODE HERE #######
                     
-                # Uncomment the following lines to test the query_chroma_collection() method
                 document = chroma_creator.query_chroma_collection(topic_input) 
                 
     if document:
-        screen.empty() # Screen 2
+        screen.empty()
         with st.container():
             st.header("Query Chroma for Topic, top Document: ")
             st.write(document)

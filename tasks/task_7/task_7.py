@@ -80,7 +80,6 @@ class QuizGenerator:
             model_name=self.model_name,
             temperature=self.temperature,
             max_tokens=self.max_output_tokens
-            ############# YOUR CODE HERE ############
         )
 
         
@@ -109,46 +108,27 @@ class QuizGenerator:
 
         Note: Handle cases where the vectorstore is not provided by raising a ValueError.
         """
-        ############# YOUR CODE HERE ############
-        # Initialize the LLM from the 'init_llm' method if not already initialized
         if(not self.llm):
             self.init_llm()
-        # Raise an error if the vectorstore is not initialized on the class
+
         if(not self.vectorstore):
             st.error("Vectorstore has not been initialized!!", icon="🚨")
-        ############# YOUR CODE HERE ############
         
         from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 
-        ############# YOUR CODE HERE ############
-        # Enable a Retriever using the as_retriever() method on the VectorStore object
-        # HINT: Use the vectorstore as the retriever initialized on the class
         retriever = self.vectorstore.as_retriever()
-        ############# YOUR CODE HERE ############
         
-        ############# YOUR CODE HERE ############
-        # Use the system template to create a PromptTemplate
-        # HINT: Use the .from_template method on the PromptTemplate class and pass in the system template
         prompt = PromptTemplate.from_template(self.system_template)
-        ############# YOUR CODE HERE ############
         
-        # RunnableParallel allows Retriever to get relevant documents
-        # RunnablePassthrough allows chain.invoke to send self.topic to LLM
         setup_and_retrieval = RunnableParallel(
             {"context": retriever, "topic": RunnablePassthrough()}
         )
         
-        ############# YOUR CODE HERE ############
-        # Create a chain with the Retriever, PromptTemplate, and LLM
-        # HINT: chain = RETRIEVER | PROMPT | LLM 
         chain = setup_and_retrieval | prompt | self.llm
-        ############# YOUR CODE HERE ############
 
-        # Invoke the chain with the topic as input
         response = chain.invoke(self.topic)
         return response
     
-# Test the Object
 if __name__ == "__main__":
     
     from tasks.task_3.task_3 import DocumentProcessor
@@ -158,7 +138,7 @@ if __name__ == "__main__":
     
     embed_config = {
         "model_name": "textembedding-gecko@003",
-        "project": "radical-ai-quizzify",
+        "project": "YOUR PROJECT-ID HERE",
         "location": "us-central1"
     }
     
@@ -168,7 +148,7 @@ if __name__ == "__main__":
         processor = DocumentProcessor()
         processor.ingest_documents()
     
-        embed_client = EmbeddingClient(**embed_config) # Initialize from Task 4
+        embed_client = EmbeddingClient(**embed_config)
     
         chroma_creator = ChromaCollectionCreator(processor, embed_client)
 
@@ -187,7 +167,7 @@ if __name__ == "__main__":
                 
                 st.write(topic_input)
                 
-                # Test the Quiz Generator
+                # Testing the Quiz Generator
                 generator = QuizGenerator(topic_input, questions, chroma_creator)
                 question = generator.generate_question_with_vectorstore()
 
